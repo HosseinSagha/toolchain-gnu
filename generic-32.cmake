@@ -1,4 +1,4 @@
-#set(TOOLCHAIN_VER -13.2.1) #${TOOLCHAIN_PREFIX}-gcc${TOOLCHAIN_VER} in the toolchain bin folder
+#set(TOOLCHAIN_VER 13.2.1) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
 
 if(WIN32)
     set(TOOLCHAIN_PREFIX i686-w64-mingw32-)

@@ -9,14 +9,14 @@ elseif(UNIX OR APPLE)
 endif()
 
 #find toolchain paths in the system
-execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc${TOOLCHAIN_VER}
+execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc-${TOOLCHAIN_VER}
                 OUTPUT_VARIABLE BINUTILS_PATHS
                 RESULTS_VARIABLE ERROR_RESULT
                 ERROR_QUIET)
 
 #if not found, fail
 if(NOT ${ERROR_RESULT} EQUAL 0)
-    message(FATAL_ERROR "\nGNU toolchain${TOOLCHAIN_VER} not found!\n")
+    message(FATAL_ERROR "\nGNU Toolchain ${TOOLCHAIN_VER} not found!\n")
 endif()
 
 #convert it to a list and get the first folder in case of multiple paths
@@ -220,4 +220,5 @@ find_program(CMAKE_OBJDUMP ${TOOLCHAIN_PREFIX}objdump HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ HINTS ${TOOLCHAIN_DIR})
+
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})

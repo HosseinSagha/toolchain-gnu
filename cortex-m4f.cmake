@@ -10,4 +10,3 @@ set(SPEC_FLAGS_INIT "--specs=nosys.specs")
 set(SPEC_FLAGS "--specs=nano.specs")
 
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain-gnu.cmake)
-

@@ -41,6 +41,7 @@ set(COMPILER_FLAGS
     -fstack-usage
     -fstrict-aliasing
     $<$<COMPILE_LANGUAGE:CXX>:
+    -fconcepts-diagnostics-depth=20
     -fcoroutines
     >
     $<IF:$<STREQUAL:${SPEC_FLAGS},--specs=nano.specs>,
@@ -186,8 +187,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-set(DEBUG_FLAGS "-O0 -g3 -DDEBUG ${CPU_FLAGS} ${SPEC_FLAGS}")
-set(RELEASE_FLAGS "-Os -g3 -DNDEBUG ${CPU_FLAGS} ${SPEC_FLAGS}")
+set(DEBUG_OPTIM_FLAG -O0)
+set(RELEASE_OPTIM_FLAG -Os)
+set(DEBUG_FLAGS "-g3 -DDEBUG ${DEBUG_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
+set(RELEASE_FLAGS "-g3 -DNDEBUG ${RELEASE_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG ${DEBUG_FLAGS})
 set(CMAKE_C_FLAGS_RELEASE ${RELEASE_FLAGS})
 set(CMAKE_CXX_FLAGS_DEBUG ${DEBUG_FLAGS})
@@ -200,8 +203,8 @@ set(CMAKE_CXX_FLAGS_INIT ${SPEC_FLAGS_INIT})
 
 #linker options
 set(LINKER_OPTS
+    $<$<CONFIG:Release>:LINKER:-flto=auto LINKER:${RELEASE_OPTIM_FLAG}>
     LINKER:-cref
-    LINKER:-flto=auto
     LINKER:-gc-sections
     LINKER:-sort-section=alignment
     LINKER:-print-memory-usage

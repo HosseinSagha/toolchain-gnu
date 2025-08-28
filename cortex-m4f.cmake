@@ -1,4 +1,4 @@
-set(TOOLCHAIN_VER 14.2.1) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
+set(TOOLCHAIN_VER 14.3.1) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
 
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 set(CMAKE_SYSTEM_NAME Generic)

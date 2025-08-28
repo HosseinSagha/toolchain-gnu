@@ -35,7 +35,7 @@ set(COMPILER_FLAGS
     -fdata-sections
     -fdebug-prefix-map=${PROJECT_SOURCE_DIR}=. #make debug file paths relative in elf
     -ffunction-sections
-    -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} #add proj name as root for _FILE_ macro
+    -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} #proj name as root for _FILE_ macro
     -fmessage-length=0
     -fstack-protector-strong
     -fstack-usage
@@ -52,8 +52,8 @@ set(COMPILER_FLAGS
     ,-fexceptions
     >
     $<$<CONFIG:Release>:
-    -ffat-lto-objects
     -flto=auto
+    -fuse-linker-plugin 
     >
     )
 
@@ -203,7 +203,6 @@ set(CMAKE_CXX_FLAGS_INIT ${SPEC_FLAGS_INIT})
 
 #linker options
 set(LINKER_OPTS
-    $<$<CONFIG:Release>:LINKER:-flto=auto LINKER:${RELEASE_OPTIM_FLAG}>
     LINKER:-cref
     LINKER:-gc-sections
     LINKER:-sort-section=alignment
@@ -218,10 +217,13 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_AR ${TOOLCHAIN_PREFIX}gcc-ar HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}gcc-ranlib HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_NM ${TOOLCHAIN_PREFIX}gcc-nm HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_OBJDUMP ${TOOLCHAIN_PREFIX}objdump HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size HINTS ${TOOLCHAIN_DIR})
-find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
-find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ HINTS ${TOOLCHAIN_DIR})
 
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})

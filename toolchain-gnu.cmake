@@ -8,65 +8,87 @@ elseif(UNIX OR APPLE)
     set(UTIL_SEARCH_CMD which)
 endif()
 
-#find toolchain paths in the system
+# find toolchain paths in the system
 execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc-${TOOLCHAIN_VER}
                 OUTPUT_VARIABLE BINUTILS_PATHS
                 RESULTS_VARIABLE ERROR_RESULT
                 ERROR_QUIET)
 
-#if not found, fail
+# if not found, fail
 if(NOT ${ERROR_RESULT} EQUAL 0)
     message(FATAL_ERROR "\nGNU Toolchain ${TOOLCHAIN_VER} not found!\n")
 endif()
 
-#convert it to a list and get the first folder in case of multiple paths
+# convert it to a list and get the first folder in case of multiple paths
 string(REPLACE "\n" ";" BINUTILS_PATHS_LIST ${BINUTILS_PATHS})
 list(GET BINUTILS_PATHS_LIST 0 TOOLCHAIN_DIR)
 cmake_path(REMOVE_FILENAME TOOLCHAIN_DIR OUTPUT_VARIABLE TOOLCHAIN_DIR)
 
-#assembler flags
+# assembler flags
 set(ASM_OPTIONS
     -D__ASSEMBLY__
     -x assembler-with-cpp
     )
 
-#compile flags
+# compile flags
 set(COMPILER_FLAGS
     -fdata-sections
-    -fdebug-prefix-map=${PROJECT_SOURCE_DIR}=. #make debug file paths relative in elf
     -ffunction-sections
-    -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} #proj name as root for _FILE_ macro
+    -fcanon-prefix-map # Canonicalize paths in debug info
+    -fdebug-prefix-map=${PROJECT_SOURCE_DIR}=. # Debug info path remapping   
+    -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} # PROJECT_NAME as root for _FILE_ macro
     -fmessage-length=0
     -fstack-protector-strong
     -fstack-usage
-    -fstrict-aliasing
     $<$<COMPILE_LANGUAGE:CXX>:
-    -fconcepts-diagnostics-depth=20
-    -fcoroutines
+      -fconcepts-diagnostics-depth=20
+      -fcoroutines
     >
     $<IF:$<STREQUAL:${SPEC_FLAGS},--specs=nano.specs>,
-    -fno-exceptions
-    $<$<COMPILE_LANGUAGE:CXX>:
-    -fno-rtti
-    >
-    ,-fexceptions
+      -fno-exceptions
+      $<$<COMPILE_LANGUAGE:CXX>:
+        -fno-rtti
+      >
+      ,-fexceptions
     >
     $<$<CONFIG:Release>:
+      $<$<COMPILE_LANGUAGE:C>:
+        -fanalyzer
+      >
+    -fdevirtualize-at-ltrans
+    -fipa-pta
+    -fno-semantic-interposition
+    # link time optimisation
+    -ffat-lto-objects # Preserve non-LTO object code for debugging
     -flto=auto
-    -fuse-linker-plugin 
+    -fuse-linker-plugin
+    # -O3 optimisation flags that do not increase code size significantly
+    -fgcse-after-reload
+    -fipa-cp-clone
+    -floop-interchange
+    -floop-unroll-and-jam
+#    -fpeel-loops
+    -fpredictive-commoning
+    -fsplit-loops
+    -fsplit-paths
+    -ftree-loop-distribution
+    -ftree-partial-pre
+    -funswitch-loops
+    -fvect-cost-model=dynamic
+    -fversion-loops-for-strides
     >
     )
 
-#arm-none-eabi-gcc -Q --help=warning
-set(WARNING_OPTIONS
-#    -Waggregate-return
+# arm-none-eabi-gcc -Q --help=warning
+set(WARNING_OPTIONS -Wno-deprecated-declarations
+    -Waggregate-return
     -Wall
     -Walloc-zero
     -Walloca
-    -Wanalyzer-too-complex
     -Warith-conversion
     -Warray-bounds=2
     -Wattribute-alias=2
+    -Wbidi-chars=any
     -Wcast-align
     -Wcast-qual
     -Wconversion
@@ -78,7 +100,7 @@ set(WARNING_OPTIONS
     -Wduplicated-cond
     -Werror
     -Wextra
-#   -Wfatal-errors
+#    -Wfatal-errors
     -Wfloat-conversion
     -Wfloat-equal
     -Wformat=2
@@ -94,6 +116,7 @@ set(WARNING_OPTIONS
     -Wmultichar
     -Wnormalized=nfc
     -Wnull-dereference
+    -Wopenacc-parallelism
     -Wpacked
     -Wpacked-not-aligned
 #    -Wpadded
@@ -107,20 +130,22 @@ set(WARNING_OPTIONS
     -Wstrict-overflow=5
     -Wstringop-overflow=4
     -Wstringop-truncation
-#    -Wsuggest-attribute=cold
-#    -Wsuggest-attribute=const
-#    -Wsuggest-attribute=format
-#    -Wsuggest-attribute=malloc
-#    -Wsuggest-attribute=noreturn
-#    -Wsuggest-attribute=pure
-#    -Wsuggest-final-methods
-#    -Wsuggest-final-types
+    -Wsuggest-attribute=cold
+    -Wsuggest-attribute=const
+    -Wsuggest-attribute=format
+    -Wsuggest-attribute=malloc
+    -Wsuggest-attribute=noreturn
+    -Wsuggest-attribute=pure
+    -Wsuggest-final-methods
+    -Wsuggest-final-types
     -Wswitch-default
     -Wswitch-enum
-    -Wtrampolines                         
+    -Wtrampolines
+    -Wtrivial-auto-var-init                      
     -Wundef
-    -Wunused-const-variable
+    -Wunused-const-variable=2
     -Wunused-macros
+    -Wuse-after-free=3
     -Wvector-operation-performance
     -Wvla
     -Wwrite-strings
@@ -128,7 +153,6 @@ set(WARNING_OPTIONS
     -Wbad-function-cast
     -Winit-self
     -Wjump-misses-init
-    -Wmissing-parameter-type
     -Wmissing-prototypes
     -Wnarrowing
     -Wnested-externs
@@ -188,7 +212,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 set(DEBUG_OPTIM_FLAG -O0)
-set(RELEASE_OPTIM_FLAG -Os)
+set(RELEASE_OPTIM_FLAG -O2)
 set(DEBUG_FLAGS "-g3 -DDEBUG ${DEBUG_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(RELEASE_FLAGS "-g3 -DNDEBUG ${RELEASE_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG ${DEBUG_FLAGS})
@@ -205,8 +229,9 @@ set(CMAKE_CXX_FLAGS_INIT ${SPEC_FLAGS_INIT})
 set(LINKER_OPTS
     LINKER:-cref
     LINKER:-gc-sections
-    LINKER:-sort-section=alignment
     LINKER:-print-memory-usage
+    LINKER:-sort-common #sort common symbols by alignment for better cache locality
+    LINKER:-sort-section=alignment
     LINKER:-u,_printf_float
     LINKER:-u,_scanf_float
     )

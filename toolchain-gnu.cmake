@@ -55,27 +55,27 @@ set(COMPILER_FLAGS
       $<$<COMPILE_LANGUAGE:C>:
         -fanalyzer
       >
-    -fdevirtualize-at-ltrans
-    -fipa-pta
-    -fno-semantic-interposition
-    # link time optimisation
-    -ffat-lto-objects # Preserve non-LTO object code for debugging
-    -flto=auto
-    -fuse-linker-plugin
-    # -O3 optimisation flags that do not increase code size significantly
-    -fgcse-after-reload
-    -fipa-cp-clone
-    -floop-interchange
-    -floop-unroll-and-jam
-#    -fpeel-loops
-    -fpredictive-commoning
-    -fsplit-loops
-    -fsplit-paths
-    -ftree-loop-distribution
-    -ftree-partial-pre
-    -funswitch-loops
-    -fvect-cost-model=dynamic
-    -fversion-loops-for-strides
+      -fdevirtualize-at-ltrans
+      -fipa-pta
+      -fno-semantic-interposition
+      # link time optimisation
+      -ffat-lto-objects # Preserve non-LTO object code for debugging
+      -flto=auto
+      -fuse-linker-plugin
+      # -O3 optimisation flags that do not increase code size significantly
+      -fgcse-after-reload
+      -fipa-cp-clone
+      -floop-interchange
+      -floop-unroll-and-jam
+#      -fpeel-loops
+      -fpredictive-commoning
+      -fsplit-loops
+      -fsplit-paths
+      -ftree-loop-distribution
+      -ftree-partial-pre
+      -funswitch-loops
+      -fvect-cost-model=dynamic
+      -fversion-loops-for-strides
     >
     )
 
@@ -150,55 +150,55 @@ set(WARNING_OPTIONS -Wno-deprecated-declarations
     -Wvla
     -Wwrite-strings
     $<$<COMPILE_LANGUAGE:C>:
-    -Wbad-function-cast
-    -Winit-self
-    -Wjump-misses-init
-    -Wmissing-prototypes
-    -Wnarrowing
-    -Wnested-externs
-    -Wstrict-prototypes
-    -Wunsuffixed-float-constants
+      -Wbad-function-cast
+      -Winit-self
+      -Wjump-misses-init
+      -Wmissing-prototypes
+      -Wnarrowing
+      -Wnested-externs
+      -Wstrict-prototypes
+      -Wunsuffixed-float-constants
     >
     $<$<COMPILE_LANGUAGE:CXX>:
-    -Waligned-new=all
-    -Wcatch-value=3
-    -Wclass-conversion
-    -Wclass-memaccess
-    -Wcomma-subscript
-    -Wconditionally-supported
-    -Wconversion-null
-    -Wctor-dtor-privacy
-    -Wdelete-incomplete
-    -Wdelete-non-virtual-dtor
-    -Wdeprecated-copy-dtor
-    -Weffc++
-    -Wextra-semi
-    -Winaccessible-base
-    -Winherited-variadic-ctor
-    -Winit-list-lifetime
-    -Winvalid-offsetof
-    -Wliteral-suffix
-    -Wmismatched-tags
-    -Wnoexcept
-    -Wnon-template-friend
-    -Wold-style-cast
-    -Woverloaded-virtual
-    -Wplacement-new=2
-    -Wpmf-conversions
-    -Wredundant-tags
-    -Wregister
-    -Wreorder
-    -Wsign-promo
-    -Wsized-deallocation
-    -Wstrict-null-sentinel
-    -Wsubobject-linkage
-    -Wsuggest-override
-    -Wsynth
-    -Wterminate
-    -Wuseless-cast
-    -Wvirtual-move-assign
-    -Wvolatile
-    -Wzero-as-null-pointer-constant
+      -Waligned-new=all
+      -Wcatch-value=3
+      -Wclass-conversion
+      -Wclass-memaccess
+      -Wcomma-subscript
+      -Wconditionally-supported
+      -Wconversion-null
+      -Wctor-dtor-privacy
+      -Wdelete-incomplete
+      -Wdelete-non-virtual-dtor
+      -Wdeprecated-copy-dtor
+      -Weffc++
+      -Wextra-semi
+      -Winaccessible-base
+      -Winherited-variadic-ctor
+      -Winit-list-lifetime
+      -Winvalid-offsetof
+      -Wliteral-suffix
+      -Wmismatched-tags
+      -Wnoexcept
+      -Wnon-template-friend
+      -Wold-style-cast
+      -Woverloaded-virtual
+      -Wplacement-new=2
+      -Wpmf-conversions
+      -Wredundant-tags
+      -Wregister
+      -Wreorder
+      -Wsign-promo
+      -Wsized-deallocation
+      -Wstrict-null-sentinel
+      -Wsubobject-linkage
+      -Wsuggest-override
+      -Wsynth
+      -Wterminate
+      -Wuseless-cast
+      -Wvirtual-move-assign
+      -Wvolatile
+      -Wzero-as-null-pointer-constant
     >
     )
 

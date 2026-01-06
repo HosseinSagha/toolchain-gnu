@@ -1,0 +1,13 @@
+{
+    "gitHistory.includeRemoteBranches": true,
+    "git.autofetch": "all",
+    "git.fetchOnPull": true,
+    "git.postCommitCommand": "push",
+    "git.pruneOnFetch": true,
+    "git.pullBeforeCheckout": true,
+    "[cmake]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "wysaid.clion-cmake-format"
+    }
+}
+    

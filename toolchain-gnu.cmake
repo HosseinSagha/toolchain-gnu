@@ -1,206 +1,206 @@
-#GNU toolchain
+# GNU toolchain
 set(CMAKE_C_COMPILER_ID GNU)
 set(CMAKE_CXX_COMPILER_ID GNU)
 
-if(WIN32)
+if (WIN32)
     set(UTIL_SEARCH_CMD where)
-elseif(UNIX OR APPLE)
+elseif (UNIX OR APPLE)
     set(UTIL_SEARCH_CMD which)
-endif()
+endif ()
 
-# find toolchain paths in the system
+# Find toolchain paths in the system
 execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc-${TOOLCHAIN_VER}
-                OUTPUT_VARIABLE BINUTILS_PATHS
-                RESULTS_VARIABLE ERROR_RESULT
-                ERROR_QUIET)
+        OUTPUT_VARIABLE BINUTILS_PATHS
+        RESULTS_VARIABLE ERROR_RESULT
+        ERROR_QUIET
+)
 
-# if not found, fail
-if(NOT ${ERROR_RESULT} EQUAL 0)
+# If not found, fail
+if (NOT ${ERROR_RESULT} EQUAL 0)
     message(FATAL_ERROR "\nGNU Toolchain ${TOOLCHAIN_VER} not found!\n")
-endif()
+endif ()
 
-# convert it to a list and get the first folder in case of multiple paths
+# Convert it to a list and get the first folder in case of multiple paths
 string(REPLACE "\n" ";" BINUTILS_PATHS_LIST ${BINUTILS_PATHS})
 list(GET BINUTILS_PATHS_LIST 0 TOOLCHAIN_DIR)
 cmake_path(REMOVE_FILENAME TOOLCHAIN_DIR OUTPUT_VARIABLE TOOLCHAIN_DIR)
 
-# assembler flags
+# Assembler flags
 set(ASM_OPTIONS
-    -D__ASSEMBLY__
-    -x assembler-with-cpp
-    )
+        -D__ASSEMBLY__
+        -x assembler-with-cpp
+)
 
-# compile flags
+# Compile flags
 set(COMPILER_FLAGS
-    -fdata-sections
-    -ffunction-sections
-    -fcanon-prefix-map # Canonicalize paths in debug info
-    -fdebug-prefix-map=${PROJECT_SOURCE_DIR}=. # Debug info path remapping   
-    -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} # PROJECT_NAME as root for _FILE_ macro
-    -fmessage-length=0
-    -fstack-protector-strong
-    -fstack-usage
-    $<$<COMPILE_LANGUAGE:CXX>:
-      -fconcepts-diagnostics-depth=20
-      -fcoroutines
-    >
-    $<IF:$<STREQUAL:${SPEC_FLAGS},--specs=nano.specs>,
-      -fno-exceptions
-      $<$<COMPILE_LANGUAGE:CXX>:
+        -fdata-sections
+        -ffunction-sections
+        -fcanon-prefix-map # Canonicalize paths in debug info
+        -fdebug-prefix-map=${PROJECT_SOURCE_DIR}=. # Debug info path remapping   
+        -fmacro-prefix-map=${PROJECT_SOURCE_DIR}=${PROJECT_NAME} # PROJECT_NAME as root for _FILE_ macro
+        -fmessage-length=0
+        -fstack-protector-strong
+        -fstack-usage
+        $<$<COMPILE_LANGUAGE:CXX>:
+        -fconcepts-diagnostics-depth=20
+        -fcoroutines
+        >
+        $<IF:$<STREQUAL:${SPEC_FLAGS},--specs=nano.specs>,
+        -fno-exceptions
+        $<$<COMPILE_LANGUAGE:CXX>:
         -fno-rtti
-      >
-      ,-fexceptions
-    >
-    $<$<CONFIG:Release>:
-      $<$<COMPILE_LANGUAGE:C>:
+        >
+        ,-fexceptions
+        >
+        $<$<CONFIG:Release>:
+        $<$<COMPILE_LANGUAGE:C>:
         -fanalyzer
-      >
-      -fdevirtualize-at-ltrans
-      -fipa-pta
-      -fno-semantic-interposition
-      # link time optimisation
-      -ffat-lto-objects # Preserve non-LTO object code for debugging
-      -flto=auto
-      -fuse-linker-plugin
-      # -O3 optimisation flags that do not increase code size significantly
-      -fgcse-after-reload
-      -fipa-cp-clone
-      -floop-interchange
-      -floop-unroll-and-jam
-#      -fpeel-loops
-      -fpredictive-commoning
-      -fsplit-loops
-      -fsplit-paths
-      -ftree-loop-distribution
-      -ftree-partial-pre
-      -funswitch-loops
-      -fvect-cost-model=dynamic
-      -fversion-loops-for-strides
-    >
-    )
+        >
+        -fdevirtualize-at-ltrans
+        -fipa-pta
+        -fno-semantic-interposition
+        # Link time optimisation
+        -ffat-lto-objects # Preserve non-LTO object code for debugging
+        -flto=auto
+        -fuse-linker-plugin
+        # -O3 optimisation flags that do not increase code size significantly
+        -fgcse-after-reload
+        -fipa-cp-clone
+        -floop-interchange
+        -floop-unroll-and-jam
+        #-fpeel-loops
+        -fpredictive-commoning
+        -fsplit-loops
+        -fsplit-paths
+        -ftree-loop-distribution
+        -ftree-partial-pre
+        -funswitch-loops
+        -fvect-cost-model=dynamic
+        -fversion-loops-for-strides
+        >
+)
 
-# arm-none-eabi-gcc -Q --help=warning
+# Use 'arm-none-eabi-gcc -Q --help=warning' for available options
 set(WARNING_OPTIONS -Wno-deprecated-declarations
-    -Waggregate-return
-    -Wall
-    -Walloc-zero
-    -Walloca
-    -Warith-conversion
-    -Warray-bounds=2
-    -Wattribute-alias=2
-    -Wbidi-chars=any
-    -Wcast-align
-    -Wcast-qual
-    -Wconversion
-    -Wdangling-else
-    -Wdate-time
-    -Wdisabled-optimization
-    -Wdouble-promotion
-    -Wduplicated-branches
-    -Wduplicated-cond
-    -Werror
-    -Wextra
-#    -Wfatal-errors
-    -Wfloat-conversion
-    -Wfloat-equal
-    -Wformat=2
-    -Wformat-diag
-    -Wformat-overflow=2
-    -Wformat-signedness
-    -Wformat-truncation=2
-    -Wimplicit-fallthrough=5
-    -Winvalid-pch
-    -Wlogical-op
-    -Wmissing-declarations
-    -Wmissing-include-dirs
-    -Wmultichar
-    -Wnormalized=nfc
-    -Wnull-dereference
-    -Wopenacc-parallelism
-    -Wpacked
-    -Wpacked-not-aligned
-#    -Wpadded
-    -Wpedantic
-    -Wpointer-arith
-    -Wredundant-decls
-    -Wscalar-storage-order
-    -Wshadow
-    -Wshift-overflow=2
-    -Wstack-protector
-    -Wstrict-overflow=5
-    -Wstringop-overflow=4
-    -Wstringop-truncation
-    -Wsuggest-attribute=cold
-    -Wsuggest-attribute=const
-    -Wsuggest-attribute=format
-    -Wsuggest-attribute=malloc
-    -Wsuggest-attribute=noreturn
-    -Wsuggest-attribute=pure
-    -Wsuggest-final-methods
-    -Wsuggest-final-types
-    -Wswitch-default
-    -Wswitch-enum
-    -Wtrampolines
-    -Wtrivial-auto-var-init                      
-    -Wundef
-    -Wunused-const-variable=2
-    -Wunused-macros
-    -Wuse-after-free=3
-    -Wvector-operation-performance
-    -Wvla
-    -Wwrite-strings
-    $<$<COMPILE_LANGUAGE:C>:
-      -Wbad-function-cast
-      -Winit-self
-      -Wjump-misses-init
-      -Wmissing-prototypes
-      -Wnarrowing
-      -Wnested-externs
-      -Wstrict-prototypes
-      -Wunsuffixed-float-constants
-    >
-    $<$<COMPILE_LANGUAGE:CXX>:
-      -Waligned-new=all
-      -Wcatch-value=3
-      -Wclass-conversion
-      -Wclass-memaccess
-      -Wcomma-subscript
-      -Wconditionally-supported
-      -Wconversion-null
-      -Wctor-dtor-privacy
-      -Wdelete-incomplete
-      -Wdelete-non-virtual-dtor
-      -Wdeprecated-copy-dtor
-      -Weffc++
-      -Wextra-semi
-      -Winaccessible-base
-      -Winherited-variadic-ctor
-      -Winit-list-lifetime
-      -Winvalid-offsetof
-      -Wliteral-suffix
-      -Wmismatched-tags
-      -Wnoexcept
-      -Wnon-template-friend
-      -Wold-style-cast
-      -Woverloaded-virtual
-      -Wplacement-new=2
-      -Wpmf-conversions
-      -Wredundant-tags
-      -Wregister
-      -Wreorder
-      -Wsign-promo
-      -Wsized-deallocation
-      -Wstrict-null-sentinel
-      -Wsubobject-linkage
-      -Wsuggest-override
-      -Wsynth
-      -Wterminate
-      -Wuseless-cast
-      -Wvirtual-move-assign
-      -Wvolatile
-      -Wzero-as-null-pointer-constant
-    >
-    )
+        -Waggregate-return
+        -Wall
+        -Walloc-zero
+        -Walloca
+        -Warith-conversion
+        -Warray-bounds=2
+        -Wattribute-alias=2
+        -Wbidi-chars=any
+        -Wcast-align
+        -Wconversion
+        -Wdangling-else
+        -Wdate-time
+        -Wdisabled-optimization
+        -Wdouble-promotion
+        -Wduplicated-branches
+        -Wduplicated-cond
+        -Werror
+        -Wextra
+        #-Wfatal-errors
+        -Wfloat-conversion
+        -Wfloat-equal
+        -Wformat=2
+        -Wformat-diag
+        -Wformat-overflow=2
+        -Wformat-signedness
+        -Wformat-truncation=2
+        -Wimplicit-fallthrough=5
+        -Winvalid-pch
+        -Wlogical-op
+        -Wmissing-declarations
+        -Wmissing-include-dirs
+        -Wmultichar
+        -Wnormalized=nfc
+        -Wnull-dereference
+        -Wopenacc-parallelism
+        -Wpacked
+        -Wpacked-not-aligned
+        #-Wpadded
+        -Wpedantic
+        -Wpointer-arith
+        -Wredundant-decls
+        -Wscalar-storage-order
+        -Wshadow
+        -Wshift-overflow=2
+        -Wstack-protector
+        -Wstrict-overflow=5
+        -Wstringop-overflow=4
+        -Wstringop-truncation
+        -Wsuggest-attribute=cold
+        -Wsuggest-attribute=const
+        -Wsuggest-attribute=format
+        -Wsuggest-attribute=malloc
+        -Wsuggest-attribute=noreturn
+        -Wsuggest-attribute=pure
+        -Wsuggest-final-methods
+        -Wsuggest-final-types
+        -Wswitch-default
+        -Wswitch-enum
+        -Wtrampolines
+        -Wtrivial-auto-var-init
+        -Wundef
+        -Wunused-const-variable=2
+        -Wunused-macros
+        -Wuse-after-free=3
+        -Wvector-operation-performance
+        -Wvla
+        -Wwrite-strings
+        $<$<COMPILE_LANGUAGE:C>:
+        -Wbad-function-cast
+        -Winit-self
+        -Wjump-misses-init
+        -Wmissing-prototypes
+        -Wnarrowing
+        -Wnested-externs
+        -Wstrict-prototypes
+        -Wunsuffixed-float-constants
+        >
+        $<$<COMPILE_LANGUAGE:CXX>:
+        -Waligned-new=all
+        -Wcatch-value=3
+        -Wclass-conversion
+        -Wclass-memaccess
+        -Wcomma-subscript
+        -Wconditionally-supported
+        -Wconversion-null
+        -Wctor-dtor-privacy
+        -Wdelete-incomplete
+        -Wdelete-non-virtual-dtor
+        -Wdeprecated-copy-dtor
+        -Weffc++
+        -Wextra-semi
+        -Winaccessible-base
+        -Winherited-variadic-ctor
+        -Winit-list-lifetime
+        -Winvalid-offsetof
+        -Wliteral-suffix
+        -Wmismatched-tags
+        -Wnoexcept
+        -Wnon-template-friend
+        -Wold-style-cast
+        -Woverloaded-virtual
+        -Wplacement-new=2
+        -Wpmf-conversions
+        -Wredundant-tags
+        -Wregister
+        -Wreorder
+        -Wsign-promo
+        -Wsized-deallocation
+        -Wstrict-null-sentinel
+        -Wsubobject-linkage
+        -Wsuggest-override
+        -Wsynth
+        -Wterminate
+        -Wuseless-cast
+        -Wvirtual-move-assign
+        -Wvolatile
+        -Wzero-as-null-pointer-constant
+        >
+)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:ASM>:${ASM_OPTIONS}>" "${COMPILER_FLAGS}" "${WARNING_OPTIONS}")
 
@@ -212,7 +212,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 set(DEBUG_OPTIM_FLAG -O0)
-set(RELEASE_OPTIM_FLAG -O2)
+set(RELEASE_OPTIM_FLAG -O2) # Best compromise between size and speed
 set(DEBUG_FLAGS "-g3 -DDEBUG ${DEBUG_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(RELEASE_FLAGS "-g3 -DNDEBUG ${RELEASE_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG ${DEBUG_FLAGS})
@@ -225,18 +225,18 @@ set(CMAKE_ASM_FLAGS_RELEASE ${RELEASE_FLAGS})
 set(CMAKE_C_FLAGS_INIT ${SPEC_FLAGS_INIT})
 set(CMAKE_CXX_FLAGS_INIT ${SPEC_FLAGS_INIT})
 
-#linker options
+# Linker options
 set(LINKER_OPTS
-    LINKER:-cref
-    LINKER:-gc-sections
-    LINKER:-print-memory-usage
-    LINKER:-sort-common #sort common symbols by alignment for better cache locality
-    LINKER:-sort-section=alignment
-    LINKER:-u,_printf_float
-    LINKER:-u,_scanf_float
-    )
+        LINKER:-cref
+        LINKER:-gc-sections
+        LINKER:-print-memory-usage
+        LINKER:-sort-common # Sort common symbols by alignment for better cache locality
+        LINKER:-sort-section=alignment
+        LINKER:-u,_printf_float
+        LINKER:-u,_scanf_float
+)
 
-#limit find_program search paths
+# Limit find_program search paths
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

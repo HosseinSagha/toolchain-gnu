@@ -13,7 +13,8 @@ set(MCU_ARCH cortex-m33)
 # -munaligned-access: Enable efficient unaligned memory access (M4 hardware feature)
 # -ffast-math: Aggressive floating-point optimizations (relaxes IEEE-754 strict compliance)
 # -fno-math-errno: Don't set errno for math functions (saves calls/checks)
-set(CPU_FLAGS "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv5-sp-d16 -munaligned-access -ffast-math -fno-math-errno")
+set(CPU_FLAGS
+        "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv5-sp-d16 -munaligned-access -ffast-math -fno-math-errno")
 set(SPEC_FLAGS_INIT "--specs=nosys.specs")
 set(SPEC_FLAGS "--specs=nano.specs")
 

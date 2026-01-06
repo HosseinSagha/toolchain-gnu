@@ -4,17 +4,16 @@ set(TOOLCHAIN_PREFIX arm-none-eabi-)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
 
-set(MCU_ARCH cortex-m4)
-# CPU flags optimized for Cortex-M4F performance
+set(MCU_ARCH cortex-m7)
+# CPU flags optimized for Cortex-M7F performance
 # -mthumb: Use Thumb instruction set (16/32-bit mixed for code density)
-# -mcpu: Target Cortex-M4 with optimized instruction scheduling
+# -mcpu: Target Cortex-M7 with optimized instruction scheduling
 # -mfloat-abi=hard: Use hardware FPU with direct FP register passing (faster than soft float)
-# -mfpu: Enable single-precision FPU instructions
-# -munaligned-access: Enable efficient unaligned memory access (M4 hardware feature)
+# -mfpu: Enable double-precision FPU instructions (M7 supports both single and double precision)
+# -munaligned-access: Enable efficient unaligned memory access (M7 hardware feature)
 # -ffast-math: Aggressive floating-point optimizations (relaxes IEEE-754 strict compliance)
 # -fno-math-errno: Don't set errno for math functions (saves calls/checks)
-set(CPU_FLAGS
-        "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv4-sp-d16 -munaligned-access -ffast-math -fno-math-errno")
+set(CPU_FLAGS "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv5-d16 -munaligned-access -ffast-math -fno-math-errno")
 set(SPEC_FLAGS_INIT "--specs=nosys.specs")
 set(SPEC_FLAGS "--specs=nano.specs")
 

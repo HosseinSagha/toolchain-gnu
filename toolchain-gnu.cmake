@@ -82,7 +82,7 @@ set(COMPILER_FLAGS
 
 # Use 'arm-none-eabi-gcc -Q --help=warning' for available options
 set(WARNING_OPTIONS -Wno-deprecated-declarations
-        -Waggregate-return
+        #-Waggregate-return
         -Wall
         -Walloc-zero
         -Walloca

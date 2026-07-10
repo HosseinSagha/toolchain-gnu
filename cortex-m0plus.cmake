@@ -1,5 +1,3 @@
-set(TOOLCHAIN_VER 15.2.1) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
-
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR ARM)

@@ -67,7 +67,7 @@ set(COMPILER_FLAGS
     -ffat-lto-objects # Preserve non-LTO object code for debugging
     -flto=auto
     -fuse-linker-plugin
-    # -O3 optimisation flags that do not increase code size significantly
+    # O3 optimisation flags that do not increase code size significantly
     -fgcse-after-reload
     -fipa-cp-clone
     -floop-interchange
@@ -248,6 +248,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_ASM_COMPILER ${TOOLCHAIN_PREFIX}gcc-as HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_AR ${TOOLCHAIN_PREFIX}gcc-ar HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}gcc-ranlib HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_NM ${TOOLCHAIN_PREFIX}gcc-nm HINTS ${TOOLCHAIN_DIR})
@@ -255,4 +256,3 @@ find_program(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_OBJDUMP ${TOOLCHAIN_PREFIX}objdump HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size HINTS ${TOOLCHAIN_DIR})
 
-set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})

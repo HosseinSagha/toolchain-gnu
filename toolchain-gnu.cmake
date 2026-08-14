@@ -95,6 +95,7 @@ set(WARNING_OPTIONS -Wno-deprecated-declarations
     -Wattribute-alias=2
     -Wbidi-chars=any
     -Wcast-align
+    -Wcast-qual
     -Wconversion
     -Wdangling-else
     -Wdate-time

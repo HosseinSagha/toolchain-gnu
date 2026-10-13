@@ -6,9 +6,8 @@ set(MCU_ARCH cortex-m3)
 # CPU flags optimized for Cortex-M3 performance
 # -mthumb: Use Thumb instruction set (16/32-bit mixed for code density)
 # -mcpu: Target Cortex-M3 with optimized instruction scheduling
-# -munaligned-access: Enable efficient unaligned memory access (M3 hardware feature)
 # Note: M3 has no FPU but supports unaligned access
-set(CPU_FLAGS "-mthumb -mcpu=${MCU_ARCH} -munaligned-access")
+set(CPU_FLAGS "-mthumb -mcpu=${MCU_ARCH}")
 set(SPEC_FLAGS_INIT "--specs=nosys.specs")
 set(SPEC_FLAGS "--specs=nano.specs")
 

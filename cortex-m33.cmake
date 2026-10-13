@@ -8,11 +8,10 @@ set(MCU_ARCH cortex-m33)
 # -mcpu: Target Cortex-M4 with optimized instruction scheduling
 # -mfloat-abi=hard: Use hardware FPU with direct FP register passing (faster than soft float)
 # -mfpu: Enable single-precision FPU instructions
-# -munaligned-access: Enable efficient unaligned memory access (M4 hardware feature)
 # -ffast-math: Aggressive floating-point optimizations (relaxes IEEE-754 strict compliance)
 # -fno-math-errno: Don't set errno for math functions (saves calls/checks)
 set(CPU_FLAGS
-    "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv5-sp-d16 -munaligned-access -ffast-math -fno-math-errno")
+    "-mthumb -mcpu=${MCU_ARCH} -mfloat-abi=hard -mfpu=fpv5-sp-d16 -ffast-math -fno-math-errno")
 set(SPEC_FLAGS_INIT "--specs=nosys.specs")
 set(SPEC_FLAGS "--specs=nano.specs")
 

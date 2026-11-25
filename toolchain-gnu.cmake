@@ -12,16 +12,23 @@ elseif (UNIX OR APPLE)
     set(UTIL_SEARCH_CMD which)
 endif ()
 
-# Find toolchain paths in the system
+# Find toolchain paths in the system (versioned binary, fall back to unversioned)
 execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc-${TOOLCHAIN_VER}
                 OUTPUT_VARIABLE BINUTILS_PATHS
                 RESULTS_VARIABLE ERROR_RESULT
                 ERROR_QUIET
                )
+if (NOT ${ERROR_RESULT} EQUAL 0)
+    execute_process(COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc
+                    OUTPUT_VARIABLE BINUTILS_PATHS
+                    RESULTS_VARIABLE ERROR_RESULT
+                    ERROR_QUIET
+                   )
+endif ()
 
 # If not found, fail
 if (NOT ${ERROR_RESULT} EQUAL 0)
-    message(FATAL_ERROR "\nGNU Toolchain ${TOOLCHAIN_VER} not found!\n")
+    message(FATAL_ERROR "\nGNU Toolchain not found!\n")
 endif ()
 
 # Convert it to a list and get the first folder in case of multiple paths
@@ -217,7 +224,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 set(DEBUG_OPTIM_FLAG -O0)
-set(RELEASE_OPTIM_FLAG -O2) # Best compromise between size and speed
+set(RELEASE_OPTIM_FLAG -O2)
 set(DEBUG_FLAGS "-g3 -DDEBUG ${DEBUG_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(RELEASE_FLAGS "-g3 -DNDEBUG ${RELEASE_OPTIM_FLAG} ${CPU_FLAGS} ${SPEC_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG ${DEBUG_FLAGS})
@@ -247,12 +254,12 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+find_program(CMAKE_ASM_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++ HINTS ${TOOLCHAIN_DIR})
-find_program(CMAKE_ASM_COMPILER ${TOOLCHAIN_PREFIX}gcc-as HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_AR ${TOOLCHAIN_PREFIX}gcc-ar HINTS ${TOOLCHAIN_DIR})
-find_program(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}gcc-ranlib HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_NM ${TOOLCHAIN_PREFIX}gcc-nm HINTS ${TOOLCHAIN_DIR})
+find_program(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}gcc-ranlib HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_OBJDUMP ${TOOLCHAIN_PREFIX}objdump HINTS ${TOOLCHAIN_DIR})
 find_program(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size HINTS ${TOOLCHAIN_DIR})

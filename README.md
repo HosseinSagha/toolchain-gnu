@@ -15,12 +15,19 @@ In your project's `CMakeLists.txt`, set `TOOLCHAIN_PREFIX` (e.g. `arm-none-eabi-
 ```cmake
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/path/to/toolchain-gnu/cortex-m4.cmake)
+set(TOOLCHAIN_VER 14.2.1) # optional, defaults to 15.3.1
 ```
 
 Or pass it on the command line:
 
 ```bash
 cmake -B build -DCMAKE_TOOLCHAIN_FILE=cortex-m4.cmake -DTOOLCHAIN_PREFIX=arm-none-eabi-
+```
+
+Override the toolchain version (default `15.3.1` for Cortex-M, `16.1.0` for generic):
+
+```bash
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=cortex-m4.cmake -DTOOLCHAIN_PREFIX=arm-none-eabi- -DTOOLCHAIN_VER=14.2
 ```
 
 For host unit tests (Linux/macOS/Windows):

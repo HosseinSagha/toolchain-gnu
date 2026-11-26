@@ -1,4 +1,6 @@
-set(TOOLCHAIN_VER 16.1.0) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
+if (NOT DEFINED TOOLCHAIN_VER)
+    set(TOOLCHAIN_VER 16.1.0) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
+endif ()
 
 if (WIN32)
     set(TOOLCHAIN_PREFIX x86_64-w64-mingw32-)

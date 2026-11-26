@@ -1,7 +1,5 @@
 # GNU toolchain
-if (NOT DEFINED TOOLCHAIN_VER)
-    set(TOOLCHAIN_VER 15.3.1) #${TOOLCHAIN_PREFIX}-gcc-${TOOLCHAIN_VER} in the toolchain bin folder
-endif ()
+option(TOOLCHAIN_VER "GNU toolchain version (e.g. ${TOOLCHAIN_PREFIX}gcc-<ver>)" 15.3.1)
 
 set(CMAKE_C_COMPILER_ID GNU)
 set(CMAKE_CXX_COMPILER_ID GNU)
